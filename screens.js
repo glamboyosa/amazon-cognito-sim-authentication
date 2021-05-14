@@ -12,6 +12,7 @@ import Onboarding from 'react-native-onboarding-swiper';
 import DoneButton from './components/DoneButton';
 import NextButton from './components/NextButton';
 import {screenContext} from './context';
+import {AMAZON_USER_POOL_ID, AMAZON_CLIENT_ID} from '@env';
 import {
   CognitoUserPool,
   CognitoUserAttribute,
