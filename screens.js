@@ -17,6 +17,8 @@ import {
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
 const Screens = () => {
+  // replace with subdomain gotten from tru.ID dev server
+  const baseURL = 'https://{subdomain}.local.lt';
   const {setShowApp, showApp} = useContext(screenContext);
   const [email, setEmail] = useState({
     Name: 'email',
@@ -85,7 +87,11 @@ const Screens = () => {
         />
       ) : (
         <View style={styles.container}>
-          <Text style={styles.heading}>tru.ID + Amazon Cognito</Text>
+          <View style={styles.images}>
+            <Image source={require('./images/tru-id-logo.png')} />
+            <Text style={styles.plus}>+</Text>
+            <Image source={require('./images/aws-cognito-logo.png')} />
+          </View>
           <View style={styles.form}>
             <View>
               <TextInput
@@ -133,8 +139,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heading: {
-    fontSize: 40,
+  images: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  plus: {
+    marginLeft: 15,
+    marginRight: 15,
+    fontSize: 30,
   },
   form: {
     alignItems: 'center',
@@ -161,6 +175,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 5,
+  },
+  buttonText: {
+    color: '#fff',
   },
 });
 

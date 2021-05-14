@@ -1,19 +1,13 @@
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React from 'react';
+import React, {useContext} from 'react';
+import {screenContext} from '../context';
 const DoneButton = ({props}) => {
+  const {setShowApp} = useContext(screenContext);
   return (
     <View>
       <TouchableOpacity
         {...props}
-        onPress={async () => {
-          // console.log('onboarding done');
-          // try {
-          //   await AsyncStorage.setItem('showForm', 'show');
-          // } catch (e) {
-          //   throw new Error(e.message);
-          // }
-        }}
+        onPress={async () => setShowApp(true)}
         style={styles.button}>
         <Text>Sign Up!</Text>
       </TouchableOpacity>
