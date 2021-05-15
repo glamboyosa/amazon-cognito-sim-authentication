@@ -3,7 +3,7 @@
 ## Requirements
 
 - A [tru.ID Account](https://tru.id)
-- An [AWS Account]("https://console.aws.com)
+- An [AWS Account](https://console.aws.amazon.com)
 - A mobile phone with a SIM card and mobile data connection
 - Other requirements
 
@@ -41,7 +41,7 @@ tru projects:create rn-amazon-auth
 Run the development server, pointing it to the directly containing the newly created project configuration. This will also open up a localtunnel to your development server making it publicly accessible to the Internet so that your mobile phone can access it when only connected to mobile data.
 
 ```
-tru server -t --project-dir ./rn-firebase-auth
+tru server -t --project-dir ./rn-amazon-auth
 ```
 
 ## Setting up Amazon Cognito
