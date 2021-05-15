@@ -21,14 +21,8 @@ const Screens = () => {
   // replace with subdomain gotten from tru.ID dev server
   const baseURL = 'https://{subdomain}.local.lt';
   const {setShowApp, showApp} = useContext(screenContext);
-  const [email, setEmail] = useState({
-    Name: 'email',
-    Value: '',
-  });
-  const [password, setPassword] = useState({
-    Name: 'password',
-    Value: '',
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState({
     Name: 'phone_number',
     Value: '',
@@ -36,25 +30,21 @@ const Screens = () => {
   const registerHandler = async () => {
     console.log('Register handler triggered');
     const userPool = new CognitoUserPool({
-      UserPoolId: 'us-east-2_ZO8CFRLj2',
-      ClientId:
-        'arn:aws:cognito-idp:us-east-2:375410640422:userpool/us-east-2_ZO8CFRLj2',
+      UserPoolId: AMAZON_USER_POOL_ID,
+      ClientId: AMAZON_CLIENT_ID,
     });
     const cognitoAttributeList = [];
 
-    // pass state into `CognitoUserAttribute`
-    const attributeEmail = CognitoUserAttribute(email);
+    // pass extra attribute `phoneNumber` state into `CognitoUserAttribute`
+
     const attributePhoneNumber = CognitoUserAttribute(phoneNumber);
-    const attributePassword = CognitoUserAttribute(password);
 
     // push Cognito User Attributes into `cognitioAttributeList`
-    cognitoAttributeList.push(attributeEmail);
     cognitoAttributeList.push(attributePhoneNumber);
-    cognitoAttributeList.push(attributePassword);
 
     userPool.signUp(
-      email.Value,
-      password.Value,
+      email,
+      password,
       cognitoAttributeList,
       null,
       (error, result) => {
