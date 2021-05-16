@@ -21,8 +21,8 @@ import {
 } from 'amazon-cognito-identity-js';
 import TruSDK from 'tru-sdk-react-native';
 const Screens = () => {
-  // replace with subdomain gotten from tru.ID dev server
-  const baseURL = 'https://proud-dolphin-77.loca.lt';
+  // replace with subdomain gotten from tru.ID localTunnel URL
+  const baseURL = 'https://{subdomain}.loca.lt';
   const {setShowApp, showApp} = useContext(screenContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
