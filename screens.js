@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Onboarding from 'react-native-onboarding-swiper';
 import DoneButton from './components/DoneButton';
@@ -17,9 +19,10 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
+import TruSDK from 'tru-sdk-react-native';
 const Screens = () => {
   // replace with subdomain gotten from tru.ID dev server
-  const baseURL = 'https://{subdomain}.local.lt';
+  const baseURL = ' https://new-mole-21.loca.lt';
   const {setShowApp, showApp} = useContext(screenContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,20 +30,36 @@ const Screens = () => {
     Name: 'phone_number',
     Value: '',
   });
+  const [loading, setLoading] = useState(false);
+  console.log(AMAZON_CLIENT_ID);
+
+  //reusable error handler function
+  const errorHandler = ({title, message}) => {
+    return Alert.alert(title, message, [
+      {
+        text: 'Close',
+        onPress: () => console.log('Alert closed'),
+      },
+    ]);
+  };
   const registerHandler = async () => {
     console.log('Register handler triggered');
+
+    const cognitoAttributeList = [];
     const userPool = new CognitoUserPool({
       UserPoolId: AMAZON_USER_POOL_ID,
       ClientId: AMAZON_CLIENT_ID,
     });
-    const cognitoAttributeList = [];
-
+    console.log(userPool);
     // pass extra attribute `phoneNumber` state into `CognitoUserAttribute`
-
-    const attributePhoneNumber = CognitoUserAttribute(phoneNumber);
+    const attributePhoneNumber = new CognitoUserAttribute(phoneNumber);
 
     // push Cognito User Attributes into `cognitioAttributeList`
     cognitoAttributeList.push(attributePhoneNumber);
+
+    setLoading(true);
+
+    console.log('AWS: signUp()');
 
     userPool.signUp(
       email,
@@ -49,7 +68,61 @@ const Screens = () => {
       null,
       (error, result) => {
         console.log(error, result);
-        // check for error, do phoneCheck stuff
+        if (error) {
+          setLoading(false);
+          errorHandler({
+            title: 'Something went wrong.',
+            message: error.message,
+          });
+          return;
+        }
+        console.log('AWS userPool signUp Result:', result);
+
+        console.log('tru.ID: Creating SIMCheck for', body);
+
+        const body = {phone_number: phoneNumber};
+
+        fetch(`${baseURL}/phone-check`, {
+          body,
+          method: 'POST',
+        })
+          .then(resp => resp.json())
+          .then(data => {
+            // pass the check url into the Tru SDK and perform the GET request to the PhoneCheck check url
+            TruSDK.openCheckUrl(data.check_url)
+              .then(() => {})
+              .catch(err => {
+                setLoading(false);
+                errorHandler({
+                  title: 'Something went wrong',
+                  message: err.message,
+                });
+              });
+            // Get PhoneCheck result
+            fetch(`${baseURL}/phone-check?check_id=${data.check_id}`)
+              .then(resp => resp.json())
+              .then(phoneCheckData => {
+                if (!phoneCheckData.match) {
+                  setLoading(false);
+                  errorHandler({
+                    title: 'Registration Failed',
+                    message:
+                      'SIM Change Detected. Please contact your network provider',
+                  });
+                }
+                setLoading(false);
+                Alert.alert('Registration successful', '✅', [
+                  {
+                    text: 'Close',
+                    onPress: () => console.log('Alert closed'),
+                  },
+                ]);
+              });
+          })
+          .catch(err => {
+            setLoading(false);
+            errorHandler({title: 'Something went wrong', message: err.message});
+          });
       },
     );
   };
@@ -89,19 +162,16 @@ const Screens = () => {
                 style={styles.textInput}
                 placeholder="Email"
                 placeholderTextColor="#d3d3d3"
-                value={email.Value}
-                onChangeText={Value =>
-                  setEmail(prevState => ({...prevState, Value}))
-                }
+                value={email}
+                onChangeText={Value => setEmail(Value)}
               />
               <TextInput
                 style={styles.textInput}
                 placeholder="Password"
                 placeholderTextColor="#d3d3d3"
-                value={password.Value}
-                onChangeText={Value =>
-                  setPassword(prevState => ({...prevState, Value}))
-                }
+                value={password}
+                onChangeText={Value => setPassword(Value)}
+                secureTextEntry
               />
               <TextInput
                 style={styles.textInput}
@@ -110,12 +180,21 @@ const Screens = () => {
                 keyboardType="phone-pad"
                 value={phoneNumber.Value}
                 onChangeText={Value =>
-                  setPhoneNumber(prevState => ({...prevState, Value}))
+                  setPhoneNumber(prevState => ({
+                    ...prevState,
+                    Value: Value.replace(/\s+/g, ''),
+                  }))
                 }
               />
-              <TouchableOpacity onPress={registerHandler} style={styles.button}>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </TouchableOpacity>
+              {loading ? (
+                <ActivityIndicator size="large" color="#00ff00" />
+              ) : (
+                <TouchableOpacity
+                  onPress={registerHandler}
+                  style={styles.button}>
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>
