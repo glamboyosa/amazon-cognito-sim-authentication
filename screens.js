@@ -22,7 +22,7 @@ import {
 import TruSDK from 'tru-sdk-react-native';
 const Screens = () => {
   // replace with subdomain gotten from tru.ID dev server
-  const baseURL = ' https://new-mole-21.loca.lt';
+  const baseURL = 'https://proud-dolphin-77.loca.lt';
   const {setShowApp, showApp} = useContext(screenContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +31,6 @@ const Screens = () => {
     Value: '',
   });
   const [loading, setLoading] = useState(false);
-  console.log(AMAZON_CLIENT_ID);
 
   //reusable error handler function
   const errorHandler = ({title, message}) => {
@@ -78,19 +77,30 @@ const Screens = () => {
         }
         console.log('AWS userPool signUp Result:', result);
 
-        console.log('tru.ID: Creating SIMCheck for', body);
+        const body = {phone_number: phoneNumber.Value};
 
-        const body = {phone_number: phoneNumber};
+        console.log('tru.ID: Creating PhoneCheck for', body);
 
         fetch(`${baseURL}/phone-check`, {
-          body,
+          body: JSON.stringify(body),
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         })
           .then(resp => resp.json())
           .then(data => {
+            console.log(data);
             // pass the check url into the Tru SDK and perform the GET request to the PhoneCheck check url
             TruSDK.openCheckUrl(data.check_url)
               .then(() => {})
+              .catch(err => {
+                setLoading(false);
+                errorHandler({
+                  title: 'Something went wrong',
+                  message: err.message,
+                });
+              })
               .catch(err => {
                 setLoading(false);
                 errorHandler({

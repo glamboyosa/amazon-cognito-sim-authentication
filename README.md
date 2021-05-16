@@ -103,7 +103,7 @@ You should then be given a `Pool id` & `Pool ARN`. Open the terminal and run the
 cp .env.example .env
 ```
 
-Replace `AMAZON_USER_POOL_ID` with the `Pool id` value and `AMAZON_CLIENT_ID` with the `Pool ARN` value.
+Replace `AMAZON_USER_POOL_ID` with the `Pool id` value and `AMAZON_CLIENT_ID` with the app client id gotten from "General Settings > "App clients" value.
 
 To start the project, ensure you have a physical device connected (see Running React Native on a physical device guide ) then run:
 
