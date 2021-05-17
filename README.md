@@ -95,7 +95,7 @@ Under "Triggers" leave the defaults and proceed to the next step
 
 Finally, under "Reviews" you will be shown a recap of all your settings and allowed to modify them and create the pool. Once you've looked over your settings create the pool. An example is shown below.
 
-![Cognito App client name](./images/App-Review.PNG)
+![Cognito App client name](./images/Review.PNG)
 
 You should then be given a `Pool id` & `Pool ARN`. Open the terminal and run the following
 
