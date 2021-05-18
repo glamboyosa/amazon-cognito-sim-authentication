@@ -1,4 +1,4 @@
-# Adding SIM Swap Detection to your React Native AWS Apps with Amazon Cognito & **tru.ID** PhoneCheck API
+# SIM Card Based Mobile Authentication with React Native Amazon Cognito & **tru.ID** PhoneCheck API
 
 ## Requirements
 
