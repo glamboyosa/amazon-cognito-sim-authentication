@@ -1,4 +1,4 @@
-# Adding SIM Swap Detection to your React Native AWS Apps with Amazon Cognito & **tru.ID** PhoneCheck API
+# SIM Card Based Mobile Authentication with React Native Amazon Cognito & **tru.ID** PhoneCheck API
 
 ## Requirements
 
@@ -12,13 +12,13 @@
 Clone the starter-files branch via:
 
 ```bash
-git clone -b starter-files --single-branch https://github.com/tru-ID/amazon-cognito-sim-swap-detection.git
+git clone -b starter-files --single-branch https://github.com/tru-ID/amazon-cognito-sim-authentication.git
 ```
 
 If you're only interested in the finished code in main then run:
 
 ```bash
-git clone -b main https://github.com/tru-ID/amazon-cognito-sim-swap-detection.git
+git clone -b main https://github.com/tru-ID/amazon-cognito-sim-authentication.git
 ```
 
 Create a [tru.ID Account](https://tru.id)
