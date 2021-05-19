@@ -1,6 +1,8 @@
 import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
 import React, {useContext} from 'react';
+
 import {screenContext} from '../context';
+
 const DoneButton = ({props}) => {
   const {setShowApp} = useContext(screenContext);
   return (
@@ -14,6 +16,7 @@ const DoneButton = ({props}) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
@@ -27,4 +30,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
 export default DoneButton;

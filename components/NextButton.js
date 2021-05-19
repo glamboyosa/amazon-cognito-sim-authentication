@@ -1,10 +1,12 @@
 import {StyleSheet, View, Text} from 'react-native';
 import React from 'react';
+
 const NextButton = ({props}) => (
   <View style={styles.container} {...props}>
     <Text style={styles.rightArrow}>&rarr;</Text>
   </View>
 );
+
 const styles = StyleSheet.create({
   container: {
     width: 40,
@@ -21,4 +23,5 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
+
 export default NextButton;
