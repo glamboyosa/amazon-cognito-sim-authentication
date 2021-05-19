@@ -21,12 +21,6 @@ If you're only interested in the finished code in main then run:
 git clone -b main https://github.com/tru-ID/amazon-cognito-sim-authentication.git
 ```
 
-Install dependencies:
-
-```bash
-npm install
-```
-
 Create a [tru.ID Account](https://tru.id)
 
 Install the tru.ID CLI via:
