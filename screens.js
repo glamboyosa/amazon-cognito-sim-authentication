@@ -10,20 +10,27 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+
 import Onboarding from 'react-native-onboarding-swiper';
+
 import DoneButton from './components/DoneButton';
 import NextButton from './components/NextButton';
 import {screenContext} from './context';
-import {AMAZON_USER_POOL_ID, AMAZON_CLIENT_ID} from '@env';
+
 import {
   CognitoUserPool,
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
+
 import TruSDK from 'tru-sdk-react-native';
+import {AMAZON_USER_POOL_ID, AMAZON_CLIENT_ID} from '@env';
+
 const Screens = () => {
   // replace with subdomain gotten from tru.ID localTunnel URL
   const baseURL = 'https://{subdomain}.loca.lt';
+
   const {setShowApp, showApp} = useContext(screenContext);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState({
@@ -41,6 +48,7 @@ const Screens = () => {
       },
     ]);
   };
+
   const registerHandler = async () => {
     console.log('Register handler triggered');
 
@@ -49,7 +57,9 @@ const Screens = () => {
       UserPoolId: AMAZON_USER_POOL_ID,
       ClientId: AMAZON_CLIENT_ID,
     });
+
     console.log(userPool);
+
     // pass extra attribute `phoneNumber` state into `CognitoUserAttribute`
     const attributePhoneNumber = new CognitoUserAttribute(phoneNumber);
 
@@ -67,6 +77,7 @@ const Screens = () => {
       null,
       (error, result) => {
         console.log(error, result);
+
         if (error) {
           setLoading(false);
           errorHandler({
@@ -75,6 +86,7 @@ const Screens = () => {
           });
           return;
         }
+
         console.log('AWS userPool signUp Result:', result);
 
         const body = {phone_number: phoneNumber.Value};
@@ -91,23 +103,19 @@ const Screens = () => {
           .then(resp => resp.json())
           .then(data => {
             console.log(data);
+
             // pass the check url into the Tru SDK and perform the GET request to the PhoneCheck check url
             TruSDK.openCheckUrl(data.check_url)
               .then(() => {})
               .catch(err => {
                 setLoading(false);
-                errorHandler({
-                  title: 'Something went wrong',
-                  message: err.message,
-                });
-              })
-              .catch(err => {
-                setLoading(false);
+
                 errorHandler({
                   title: 'Something went wrong',
                   message: err.message,
                 });
               });
+
             // Get PhoneCheck result
             fetch(`${baseURL}/phone-check?check_id=${data.check_id}`)
               .then(resp => resp.json())
@@ -120,13 +128,16 @@ const Screens = () => {
                       'SIM Change Detected. Please contact your network provider',
                   });
                 }
+
                 setLoading(false);
+
                 Alert.alert('Registration successful', '✅', [
                   {
                     text: 'Close',
                     onPress: () => console.log('Alert closed'),
                   },
                 ]);
+
               });
           })
           .catch(err => {
