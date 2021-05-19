@@ -37,13 +37,13 @@ Install the **tru.ID** CLI [development server plugin](https://github.com/tru-ID
 Create a new **tru.ID** project within the root directory via:
 
 ```
-tru projects:create rn-amazon-auth
+tru projects:create rn-amazon-auth --project-dir .
 ```
 
-Run the development server, pointing it to the directly containing the newly created project configuration. This will also open up a localtunnel to your development server making it publicly accessible to the Internet so that your mobile phone can access it when only connected to mobile data.
+Run the development server, pointing it to the directory containing the newly created project configuration. This will also open up a localtunnel to your development server making it publicly accessible to the Internet so that your mobile phone can access it when only connected to mobile data.
 
 ```
-tru server -t --project-dir ./rn-amazon-auth
+tru server -t
 ```
 
 ## Setting up Amazon Cognito
@@ -74,6 +74,8 @@ Under "policies" keep the defaults, as shown below.
 
 Under "MFA and verifications" keep the defaults except under the "Which attributes do you want to verify?" heading. There, select "no verification" as shown below.
 
+**TODO: feels we should acknowledge the big orange banner**
+
 ![Cognito Home](./images/MFA.PNG)
 
 Under "Message customizations" keep the defaults and proceed to the next step.
@@ -103,9 +105,9 @@ You should then be given a `Pool id` & `Pool ARN`. Open the terminal and run the
 cp .env.example .env
 ```
 
-Replace `AMAZON_USER_POOL_ID` with the `Pool id` value and `AMAZON_CLIENT_ID` with the app client id gotten from "General Settings > "App clients" value.
+Replace `AMAZON_USER_POOL_ID` with the `Pool id` value and `AMAZON_CLIENT_ID` with the `App client id` from "General Settings > "App clients" value.
 
-To start the project, ensure you have a physical device connected (see Running React Native on a physical device guide ) then run:
+To start the project, ensure you have a physical device connected (see Running React Native on a physical device guide **TODO: link**) then run:
 
 ```bash
 npm run android
