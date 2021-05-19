@@ -1,8 +1,17 @@
 import React, {useContext} from 'react';
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Appearance,
+} from 'react-native';
+
 import Onboarding from 'react-native-onboarding-swiper';
 import DoneButton from './components/DoneButton';
 import NextButton from './components/NextButton';
+
 import {screenContext} from './context';
 const Screens = () => {
   // replace with subdomain gotten from tru.ID dev server
@@ -62,6 +71,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     fontSize: 30,
+    color: Appearance.getColorScheme() === 'dark' ? '#fff' : '#000',
   },
   form: {
     alignItems: 'center',
@@ -76,6 +86,7 @@ const styles = StyleSheet.create({
     elevation: 7,
     height: 50,
     backgroundColor: '#fff',
+    color: '#000',
     marginBottom: 10,
     width: 0.8 * Dimensions.get('window').width,
   },
