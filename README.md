@@ -54,29 +54,29 @@ Navigate to the AWS Management portal
 
 Search for cognito, and select the service as shown below.
 
-![Cognito Service](./src/images/Service.PNG)
+![Cognito Service](./readme-assets/service.png)
 
 You'll be taken to the following page, select "manage user pools" & create a new user pool.
 
-![Cognito Home](./src/images/cognito-home.PNG)
+![Cognito Home](./readme-assets/cognito-home.png)
 
 Give the pool a name and select "step through settings" as shown below.
 
-![Cognito Pool Name](./src/images/pool-name.PNG)
+![Cognito Pool Name](./readme-assets/pool-name.png)
 
 Under "attributes" select "Email address or phone number" as shown below.
 
-![Cognito Home](./src/images/attributes-1.PNG)
+![Cognito Home](./readme-assets/attributes-1.png)
 
 Under the "Which standard attributes do you want to require?" heading select "phone number" click "Next Step" to continue.
 
 Under "policies" keep the defaults, as shown below.
 
-![Cognito Policies](./src/images/policies.PNG)
+![Cognito Policies](./readme-assets/policies.png)
 
 Under "MFA and verifications" keep the defaults except under the "Which attributes do you want to verify?" heading. There, select "no verification" as shown below. When that is selected, a banner would be displayed informing you that you haven't selected any verification. It is safe to ignore.
 
-![Cognito Home](./src/images/MFA.PNG)
+![Cognito Home](./readme-assets/MFA.png)
 
 Under "Message customizations" keep the defaults and proceed to the next step.
 
@@ -85,19 +85,20 @@ Under "Tags" simply proceed to the next step.
 Under "devices" keep the default and proceed to the next step.
 
 Under "App clients" click "Add an app client". Give the App client name a name and ensure to uncheck the "Generate client secret" checkbox because the AWS SDK [doesn't support apps that have a client secret](https://github.com/aws-amplify/amplify-js/tree/master/packages/amazon-cognito-identity-js#configuration) as shown below.
-![Cognito App client name](./src/images/App-Client-Name.PNG)
+
+![Cognito App client name](./readme-assets/app-client-name.png)
 
 Below, under Auth Flows Configuration ensure to check the "Enable username password based authentication (ALLOW_USER_PASSWORD_AUTH)"
 
 You will then be informed that you have added an app client, as shown below, click "Next Step" to proceed.
 
-![Cognito App client name](./src/images/App-Client-Name-2.PNG)
+![Cognito App client name](./readme-assets/app-client-name-2.png)
 
 Under "Triggers" leave the defaults and proceed to the next step
 
 Finally, under "Reviews" you will be shown a recap of all your settings and allowed to modify them and create the pool. Once you've looked over your settings create the pool. An example is shown below.
 
-![Cognito App client name](./src/images/Review.PNG)
+![Cognito App client name](./readme-assets/review.png)
 
 You should then be given a `Pool id` & `Pool ARN`. Open the terminal and run the following
 
