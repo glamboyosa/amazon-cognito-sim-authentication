@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -6,6 +6,9 @@ import {
   Text,
   View,
   Appearance,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 
 import Onboarding from 'react-native-onboarding-swiper';
