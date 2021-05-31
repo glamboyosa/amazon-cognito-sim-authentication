@@ -37,7 +37,7 @@ const errorHandler = ({title, message}) => {
 };
 
 // replace with subdomain gotten from tru.ID localTunnel URL
-const baseURL = 'https://tru-id.loca.lt';
+const baseURL = 'https://{subdomain}.loca.lt';
 
 async function createPhoneCheck(phoneNumber) {
   const body = {phone_number: phoneNumber};
