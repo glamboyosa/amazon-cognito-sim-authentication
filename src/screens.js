@@ -160,7 +160,7 @@ const Screens = () => {
   };
 
   return (
-    <>
+       <>
       {!showApp ? (
         <Onboarding
           NextButtonComponent={NextButton}
@@ -190,7 +190,7 @@ const Screens = () => {
             <Image source={require('./images/aws-cognito-logo.png')} />
           </View>
           <View style={styles.form}>
-            <View>
+            <View style={styles.center}>
               <TextInput
                 style={styles.textInput}
                 placeholder="Email"
@@ -224,7 +224,11 @@ const Screens = () => {
                 }
               />
               {loading ? (
-                <ActivityIndicator size="large" color="#00ff00" />
+                <ActivityIndicator
+                  style={styles.spinner}
+                  size="large"
+                  color="#00ff00"
+                />
               ) : (
                 <TouchableOpacity
                   onPress={registerHandler}
@@ -264,29 +268,44 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
   },
-  textInput: {
-    padding: 15,
-    borderColor: '#20232a',
-    borderWidth: 3,
-    elevation: 7,
-    height: 50,
-    backgroundColor: '#fff',
-    color: '#000',
-    marginBottom: 10,
-    width: 0.8 * Dimensions.get('window').width,
+  spinner: {
+    marginTop: 20,
   },
   button: {
-    elevation: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#e67e22',
-    color: '#ffffff',
+    backgroundColor: '#1955ff',
+    color: '#fff',
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 5,
+    borderWidth: 2,
+    borderColor: '#1955ff',
+    marginTop: 17,
+    width: '40%',
   },
   buttonText: {
     color: '#fff',
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInput: {
+    padding: 15,
+    borderRadius: 3,
+    backgroundColor: '#fff',
+    borderColor: '#858585',
+    borderWidth: 0.4,
+    elevation: 7,
+    marginBottom: 10,
+    shadowColor: '#858585',
+    shadowOffset: {width: 0.5, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    color: '#000',
+    width: 0.7 * Dimensions.get('window').width,
   },
 });
 
