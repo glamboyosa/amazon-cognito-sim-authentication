@@ -158,7 +158,7 @@ const Screens = () => {
 
           console.log('tru.ID: Created PhoneCheck', phoneCheck);
 
-          await TruSDK.openCheckUrl(phoneCheck.check_url);
+          await TruSDK.check(phoneCheck.check_url);
 
           console.log('Getting PhoneCheck result', phoneCheck.check_id);
 
