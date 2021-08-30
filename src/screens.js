@@ -152,6 +152,7 @@ const Screens = () => {
               title: 'Something went wrong.',
               message: 'PhoneCheck is not supported on MNO',
             });
+            return;
           }
           const phoneCheck = await createPhoneCheck(phoneNumber.Value);
 
