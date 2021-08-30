@@ -120,6 +120,39 @@ const Screens = () => {
         console.log('tru.ID: Creating PhoneCheck for', phoneNumber);
 
         try {
+          const reachabilityDetails = TruSDK.isReachable();
+
+          const reachabilityInfo = JSON.parse(reachabilityDetails);
+
+          if (reachabilityInfo.error.status === 400) {
+            errorHandler({
+              title: 'Something went wrong.',
+              message: 'MNO not supported',
+            });
+            setLoading(false);
+
+            return;
+          }
+          let isPhoneCheckSupported = false;
+
+          if (reachabilityInfo.error.status !== 412) {
+            for (const {productType} of reachabilityInfo.products) {
+              console.log('supported products are', productType);
+
+              if (productType === 'PhoneCheck') {
+                isPhoneCheckSupported = true;
+              }
+            }
+          } else {
+            isPhoneCheckSupported = true;
+          }
+
+          if (!isPhoneCheckSupported) {
+            errorHandler({
+              title: 'Something went wrong.',
+              message: 'PhoneCheck is not supported on MNO',
+            });
+          }
           const phoneCheck = await createPhoneCheck(phoneNumber.Value);
 
           console.log('tru.ID: Created PhoneCheck', phoneCheck);
@@ -160,7 +193,7 @@ const Screens = () => {
   };
 
   return (
-       <>
+    <>
       {!showApp ? (
         <Onboarding
           NextButtonComponent={NextButton}
