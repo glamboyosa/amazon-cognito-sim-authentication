@@ -120,7 +120,7 @@ const Screens = () => {
         console.log('tru.ID: Creating PhoneCheck for', phoneNumber);
 
         try {
-          const reachabilityDetails = TruSDK.isReachable();
+          const reachabilityDetails = await TruSDK.isReachable();
 
           const reachabilityInfo = JSON.parse(reachabilityDetails);
 
@@ -133,6 +133,7 @@ const Screens = () => {
 
             return;
           }
+
           let isPhoneCheckSupported = false;
 
           if (reachabilityInfo.error.status !== 412) {
@@ -154,6 +155,7 @@ const Screens = () => {
             });
             return;
           }
+
           const phoneCheck = await createPhoneCheck(phoneNumber.Value);
 
           console.log('tru.ID: Created PhoneCheck', phoneCheck);
