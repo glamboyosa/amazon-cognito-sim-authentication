@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.5",
-    "@tru_id/tru-sdk-react-native": "^0.3.3",
+    "@tru_id/tru-sdk-react-native": "^1.0.0-preview",
     "amazon-cognito-identity-js": "^5.0.6",
     "react": "17.0.1",
     "react-icons": "^4.2.0",

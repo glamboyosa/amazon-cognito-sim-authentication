@@ -19,82 +19,92 @@ import NextButton from './components/NextButton';
 
 import {screenContext} from './context';
 
-import TruSDK from '@tru_id/tru-sdk-react-native';
-
-import {AMAZON_USER_POOL_ID, AMAZON_CLIENT_ID} from '@env';
+import { AMAZON_USER_POOL_ID, AMAZON_CLIENT_ID } from '@env'
 import {
   CognitoUserPool,
   CognitoUserAttribute,
-} from 'amazon-cognito-identity-js';
+} from 'amazon-cognito-identity-js'
 
-const errorHandler = ({title, message}) => {
-  return Alert.alert(title, message, [
-    {
-      text: 'Close',
-      onPress: () => console.log('Alert closed'),
-    },
-  ]);
-};
+import TruSdkReactNative from '@tru_id/tru-sdk-react-native'
 
-// replace with subdomain gotten from tru.ID localTunnel URL
-const baseURL = 'https://{subdomain}.loca.lt';
+// replace with subdomain gotten from tru.ID ngrok URL
+const baseURL = '{YOUR_NGROK_URL}'
 
 async function createPhoneCheck(phoneNumber) {
-  const body = {phone_number: phoneNumber};
+  const body = { phone_number: phoneNumber }
 
-  console.log('tru.ID: Creating PhoneCheck for', body);
+  console.log('tru.ID: Creating PhoneCheck for', body)
 
-  const response = await fetch(`${baseURL}/phone-check`, {
+  const response = await fetch(`${baseURL}/v0.2/phone-check`, {
     body: JSON.stringify(body),
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-  });
+  })
 
-  const json = await response.json();
+  const json = await response.json()
 
-  return json;
+  return json
 }
 
-async function getPhoneCheck(checkId) {
-  const response = await fetch(`${baseURL}/phone-check?check_id=${checkId}`);
-  const json = await response.json();
-  return json;
+const completePhoneCheck = async (checkId, code) => {
+  const response = await fetch(`${baseURL}/v0.2/phone-check/exchange-code`, {
+    method: 'POST',
+    body: JSON.stringify({
+      check_id: checkId,
+      code: code,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+  const json = await response.json()
+
+  return json
 }
 
 const Screens = () => {
-  const {setShowApp, showApp} = useContext(screenContext);
+  const { setShowApp, showApp } = useContext(screenContext)
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [phoneNumber, setPhoneNumber] = useState({
     Name: 'phone_number',
     Value: '',
-  });
-  const [loading, setLoading] = useState(false);
+  })
+  const [loading, setLoading] = useState(false)
+
+  const errorHandler = ({ title, message }) => {
+    return Alert.alert(title, message, [
+      {
+        text: 'Close',
+        onPress: () => console.log('Alert closed'),
+      },
+    ])
+  }
 
   const registerHandler = async () => {
-    console.log('Register handler triggered');
+    console.log('Register handler triggered')
 
-    const cognitoAttributeList = [];
+    const cognitoAttributeList = []
 
     const userPool = new CognitoUserPool({
       UserPoolId: AMAZON_USER_POOL_ID,
       ClientId: AMAZON_CLIENT_ID,
-    });
+    })
 
-    console.log(userPool);
+    console.log(userPool)
 
     // pass extra attribute `phoneNumber` state into `CognitoUserAttribute`
-    const attributePhoneNumber = new CognitoUserAttribute(phoneNumber);
+    const attributePhoneNumber = new CognitoUserAttribute(phoneNumber)
 
-    // push Cognito User Attributes into `cognitioAttributeList`
-    cognitoAttributeList.push(attributePhoneNumber);
+    // push Cognito User Attributes into `cognitoAttributeList`
+    cognitoAttributeList.push(attributePhoneNumber)
 
-    setLoading(true);
+    setLoading(true)
 
-    console.log('AWS: signUp()');
+    console.log('AWS: signUp()')
 
     userPool.signUp(
       email,
@@ -102,73 +112,86 @@ const Screens = () => {
       cognitoAttributeList,
       null,
       async (error, result) => {
-        console.log(error, result);
+        console.log(error, result)
 
         if (error) {
-          setLoading(false);
+          setLoading(false)
 
           errorHandler({
             title: 'Something went wrong.',
             message: error.message,
-          });
+          })
 
-          return;
+          return
         }
 
-        console.log('AWS userPool signUp Result:', result);
-
-        console.log('tru.ID: Creating PhoneCheck for', phoneNumber);
+        console.log('AWS userPool signUp Result:', result)
 
         try {
-          const reachabilityDetails = await TruSDK.isReachable();
+          const reachabilityResponse = await TruSdkReactNative.openWithDataCellular(
+            'https://{DATA_RESIDENCY}.api.tru.id/public/coverage/v0.1/device_ip'
+          );
 
-          const reachabilityInfo = JSON.parse(reachabilityDetails);
+          console.log(reachabilityResponse);
+          let isMNOSupported = false
 
-          if (reachabilityInfo.error.status === 400) {
+          if ('error' in reachabilityResponse) {
             errorHandler({
               title: 'Something went wrong.',
               message: 'MNO not supported',
-            });
-            setLoading(false);
+            })
+            setLoading(false)
 
-            return;
+            return
+          } else if ('http_status' in reachabilityResponse) {
+            let httpStatus = reachabilityResponse.http_status;
+            if (httpStatus === 200 && reachabilityResponse.response_body !== undefined) {
+              let body = reachabilityResponse.response_body;
+              console.log('product => ' + JSON.stringify(body.products[0]));
+              isMNOSupported = true;
+            } else if (httpStatus === 400 || httpStatus === 412 || reachabilityResponse.response_body !== undefined) {
+              errorHandler({
+                title: 'Something went wrong.',
+                message: 'MNO not supported',
+              })
+              setLoading(false)
+
+              return
+            }
           }
 
-          let isPhoneCheckSupported = false;
+          let isPhoneCheckSupported = false
 
-          if (reachabilityInfo.error.status !== 412) {
-            for (const {productType} of reachabilityInfo.products) {
-              console.log('supported products are', productType);
+          if (isMNOSupported === true) {
+            reachabilityResponse.response_body.products.forEach((product) => {
+              console.log('supported products are', product)
 
-              if (productType === 'PhoneCheck') {
-                isPhoneCheckSupported = true;
+              if (product.product_name === 'Phone Check') {
+                isPhoneCheckSupported = true
               }
-            }
-          } else {
-            isPhoneCheckSupported = true;
+            })
           }
 
           if (!isPhoneCheckSupported) {
+            setLoading(false)
             errorHandler({
               title: 'Something went wrong.',
               message: 'PhoneCheck is not supported on MNO',
-            });
-            return;
+            })
+            return
           }
 
-          const phoneCheck = await createPhoneCheck(phoneNumber.Value);
+          const phoneCheck = await createPhoneCheck(phoneNumber.Value)
 
-          console.log('tru.ID: Created PhoneCheck', phoneCheck);
+          console.log('tru.ID: Created PhoneCheck', phoneCheck)
 
-          await TruSDK.check(phoneCheck.check_url);
+          const checkResponse = await TruSdkReactNative.openWithDataCellular(
+            phoneCheck.check_url
+          );
 
-          console.log('Getting PhoneCheck result', phoneCheck.check_id);
+          setLoading(false)
 
-          const phoneCheckResult = await getPhoneCheck(phoneCheck.check_id);
-
-          console.log('Received PhoneCheck result', phoneCheckResult);
-
-          setLoading(false);
+          const phoneCheckResult = await completePhoneCheck(checkResponse.response_body.check_id, checkResponse.response_body.code)
 
           if (phoneCheckResult.match) {
             Alert.alert('Registration successful', '✅', [
@@ -176,24 +199,24 @@ const Screens = () => {
                 text: 'Close',
                 onPress: () => console.log('Alert closed'),
               },
-            ]);
+            ])
           } else {
             errorHandler({
               title: 'Registration Failed',
               message: 'PhoneCheck match failed. Please contact support',
-            });
+            })
           }
         } catch (err) {
-          setLoading(false);
+          setLoading(false)
 
           errorHandler({
             title: 'Something went wrong',
             message: err.message,
-          });
+          })
         }
       },
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -234,7 +257,7 @@ const Screens = () => {
                 keyboardType="email-address"
                 value={email}
                 editable={!loading}
-                onChangeText={Value => setEmail(Value)}
+                onChangeText={(Value) => setEmail(Value)}
               />
               <TextInput
                 style={styles.textInput}
@@ -242,7 +265,7 @@ const Screens = () => {
                 placeholderTextColor="#d3d3d3"
                 value={password}
                 editable={!loading}
-                onChangeText={Value => setPassword(Value)}
+                onChangeText={(Value) => setPassword(Value)}
                 secureTextEntry
               />
               <TextInput
@@ -252,8 +275,8 @@ const Screens = () => {
                 keyboardType="phone-pad"
                 value={phoneNumber.Value}
                 editable={!loading}
-                onChangeText={Value =>
-                  setPhoneNumber(prevState => ({
+                onChangeText={(Value) =>
+                  setPhoneNumber((prevState) => ({
                     ...prevState,
                     Value: Value.replace(/\s+/g, ''),
                   }))
@@ -268,7 +291,8 @@ const Screens = () => {
               ) : (
                 <TouchableOpacity
                   onPress={registerHandler}
-                  style={styles.button}>
+                  style={styles.button}
+                >
                   <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
               )}
@@ -277,8 +301,8 @@ const Screens = () => {
         </View>
       )}
     </>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
